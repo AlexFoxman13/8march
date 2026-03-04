@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>С 8 Марта! 💐</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    :root {
+      --bg-gradient-start: #fdfbfb;
+      --bg-gradient-end: #ebedee;
+      --color-accent-gold: #d4af37;
+      --color-dusty-rose: #dca3a3;
+      --color-text-main: #4a4a4a;
+      --color-white: #ffffff;
+      --color-soft-pink: #fdf2f2;
+      --color-warm-cream: #faf8f5;
+      --font-heading: 'Playfair Display', serif;
+      --font-body: 'Inter', sans-serif;
+      --border-radius-card: 24px;
+      --transition-smooth: 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--color-text-main);
+      background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+      min-height: 100vh;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== SCENE SYSTEM ===== */
+    .scene {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 1;
+      transition: none;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .scene.active {
+      opacity: 1;
+      visibility: visible;
+      z-index: 10;
+    }
+
+    /* ===== ANIMATED BACKGROUND ===== */
+    .bg-animated {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: 0;
+      background: linear-gradient(135deg, #fdfbfb 0%, #f7e8e8 25%, #ebedee 50%, #f0e6f6 75%, #fdfbfb 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 12s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      25% { background-position: 100% 0%; }
+      50% { background-position: 100% 100%; }
+      75% { background-position: 0% 100%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* ===== FLOATING PETALS ===== */
+    .petal {
+      position: fixed;
+      pointer-events: none;
+      z-index: 5;
+      opacity: 0;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn-primary {
+      font-family: var(--font-body);
+      font-size: 1.1rem;
+      font-weight: 500;
+      padding: 18px 48px;
+      border: none;
+      border-radius: 60px;
+      background: linear-gradient(135deg, var(--color-accent-gold), #e8c84a);
+      color: var(--color-white);
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      position: relative;
+      overflow: hidden;
+      transition: all var(--transition-smooth);
+      box-shadow: 0 8px 32px rgba(212, 175, 55, 0.3);
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.6s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 12px 40px rgba(212, 175, 55, 0.45);
+    }
+
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary:active {
+      transform: translateY(-1px) scale(0.98);
+    }
+
+    .btn-secondary {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 14px 36px;
+      border: 2px solid var(--color-dusty-rose);
+      border-radius: 60px;
+      background: transparent;
+      color: var(--color-dusty-rose);
+      cursor: pointer;
+      transition: all var(--transition-smooth);
+    }
+
+    .btn-secondary:hover {
+      background: var(--color-dusty-rose);
+      color: var(--color-white);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(220, 163, 163, 0.3);
+    }
+
+    /* ===== SCENE 1: INTRO ===== */
+    #scene-1-intro {
+      perspective: 1200px;
+    }
+
+    .intro-title {
+      font-family: var(--font-heading);
+      font-size: clamp(1.5rem, 4vw, 2.8rem);
+      color: var(--color-dusty-rose);
+      margin-bottom: 2rem;
+      text-align: center;
+      opacity: 0;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .envelope-container {
+      width: 260px;
+      height: 200px;
+      position: relative;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      animation: envelopeFloat 3s ease-in-out infinite;
+      margin-bottom: 2.5rem;
+    }
+
+    @keyframes envelopeFloat {
+      0%, 100% { transform: translateY(0px) rotateZ(0deg); }
+      33% { transform: translateY(-12px) rotateZ(1deg); }
+      66% { transform: translateY(-6px) rotateZ(-1deg); }
+    }
+
+    .envelope-body {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .envelope-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 8px;
+      background: linear-gradient(145deg, #f5e6d3, #eed9c4);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .envelope-flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      transform-origin: top center;
+      z-index: 3;
+    }
+
+    .envelope-flap-inner {
+      width: 0;
+      height: 0;
+      border-left: 130px solid transparent;
+      border-right: 130px solid transparent;
+      border-top: 100px solid #e8d0b8;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    }
+
+    .envelope-front {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 60%;
+      background: linear-gradient(to top, #f0dcc8, #eed4be);
+      border-radius: 0 0 8px 8px;
+      z-index: 4;
+    }
+
+    .envelope-front::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 130px solid transparent;
+      border-right: 130px solid transparent;
+      border-bottom: 60px solid #f0dcc8;
+    }
+
+    .envelope-heart {
+      position: absolute;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+      font-size: 2rem;
+      filter: drop-shadow(0 2px 8px rgba(220,100,100,0.4));
+    }
+
+    .envelope-letter-peek {
+      position: absolute;
+      top: 10%;
+      left: 10%;
+      width: 80%;
+      height: 50%;
+      background: white;
+      border-radius: 4px;
+      z-index: 2;
+      opacity: 0;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    }
+
+    .envelope-letter-peek::after {
+      content: '';
+      position: absolute;
+      top: 20%;
+      left: 15%;
+      width: 70%;
+      height: 8px;
+      background: linear-gradient(90deg, var(--color-dusty-rose), transparent);
+      border-radius: 4px;
+      box-shadow: 0 16px 0 0 #eee, 0 32px 0 0 #f5f5f5;
+    }
+
+    .intro-btn {
+      opacity: 0;
+    }
+
+    .sparkle {
+      position: absolute;
+      pointer-events: none;
+      z-index: 6;
+    }
+
+    /* ===== SCENE 2: LETTER ===== */
+    #scene-2-letter {
+      padding: 2rem;
+    }
+
+    .letter-card {
+      max-width: 680px;
+      width: 100%;
+      background: var(--color-white);
+      border-radius: var(--border-radius-card);
+      padding: clamp(2rem, 5vw, 4rem);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04);
+      position: relative;
+      overflow: hidden;
+      transform: scale(0.8);
+      opacity: 0;
+    }
+
+    .letter-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 6px;
+      background: linear-gradient(90deg, var(--color-accent-gold), var(--color-dusty-rose), var(--color-accent-gold));
+    }
+
+    .letter-card::after {
+      content: '✿';
+      position: absolute;
+      bottom: -20px;
+      right: -10px;
+      font-size: 120px;
+      opacity: 0.05;
+      transform: rotate(15deg);
+    }
+
+    .letter-date {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--color-dusty-rose);
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .letter-greeting {
+      font-family: var(--font-heading);
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
+      color: var(--color-accent-gold);
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+    }
+
+    .letter-body {
+      font-size: clamp(1rem, 2.5vw, 1.15rem);
+      line-height: 1.9;
+      color: var(--color-text-main);
+      margin-bottom: 2rem;
+    }
+
+    .letter-signature {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-style: italic;
+      color: var(--color-dusty-rose);
+      white-space: pre-line;
+      margin-bottom: 2rem;
+    }
+
+    .letter-flower-divider {
+      text-align: center;
+      font-size: 1.5rem;
+      letter-spacing: 8px;
+      margin: 1.5rem 0;
+      opacity: 0.6;
+    }
+
+    /* ===== SCENE 3: VIDEO ===== */
+    #scene-3-video {
+      padding: 2rem;
+    }
+
+    .video-wrapper {
+      max-width: 800px;
+      width: 100%;
+      border-radius: var(--border-radius-card);
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.12);
+      position: relative;
+      background: #1a1a2e;
+      aspect-ratio: 16/9;
+    }
+
+    .video-wrapper video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .video-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-family: var(--font-heading);
+    }
+
+    .video-placeholder-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.15); opacity: 0.8; }
+    }
+
+    .video-placeholder-text {
+      font-size: 1.3rem;
+      opacity: 0.9;
+    }
+
+    .video-controls {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .audio-toggle {
+      font-family: var(--font-body);
+      font-size: 1.1rem;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      border: 2px solid var(--color-accent-gold);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--color-accent-gold);
+      cursor: pointer;
+      transition: all var(--transition-smooth);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .audio-toggle:hover {
+      background: var(--color-accent-gold);
+      color: white;
+    }
+
+    .audio-toggle.playing {
+      background: var(--color-accent-gold);
+      color: white;
+    }
+
+    .scene-title {
+      font-family: var(--font-heading);
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      color: var(--color-accent-gold);
+      margin-bottom: 2rem;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    /* ===== SCENE 4: COMPLIMENTS ===== */
+    #scene-4-compliments {
+      padding: 2rem;
+      justify-content: center;
+      gap: 0;
+    }
+
+    .compliments-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    /* --- Revealed card (top area) --- */
+    .compliment-reveal {
+      width: 100%;
+      min-height: 180px;
+      perspective: 1000px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .compliment-revealed-card {
+      width: 100%;
+      max-width: 460px;
+      min-height: 170px;
+      border-radius: var(--border-radius-card);
+      padding: 2.5rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-family: var(--font-heading);
+      font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+      line-height: 1.8;
+      color: var(--color-text-main);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.10), 0 4px 16px rgba(0,0,0,0.06);
+      position: relative;
+      overflow: hidden;
+      background: var(--color-white);
+      transform-style: preserve-3d;
+    }
+
+    .compliment-revealed-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 5px;
+      background: linear-gradient(90deg, var(--color-accent-gold), var(--color-dusty-rose));
+    }
+
+    .compliment-revealed-card .compliment-quote-mark {
+      position: absolute;
+      top: 12px; left: 18px;
+      font-size: 3rem;
+      color: rgba(212,175,55,0.13);
+      font-family: var(--font-heading);
+      line-height: 1;
+    }
+
+    .compliment-empty-state {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--color-dusty-rose);
+      opacity: 0.7;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    /* --- Card Deck (stacked) --- */
+    .compliment-deck-wrapper {
+      position: relative;
+      width: 200px;
+      height: 130px;
+      margin: 0.5rem 0;
+    }
+
+    .compliment-deck-card {
+      position: absolute;
+      width: 200px;
+      height: 120px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--color-white), #f9f1f1);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+      cursor: pointer;
+      border: 1px solid rgba(212,175,55,0.15);
+    }
+
+    .compliment-deck-card::after {
+      content: '✨';
+      position: absolute;
+      font-size: 1.2rem;
+      bottom: 8px;
+      right: 12px;
+      opacity: 0.4;
+    }
+
+    .compliment-deck-card:hover {
+      transform: translateY(-4px) !important;
+      box-shadow: 0 8px 30px rgba(212,175,55,0.18);
+    }
+
+    .compliment-counter {
+      display: none; /* hidden — infinite feel */
+    }
+
+    .random-compliment-btn {
+      margin-top: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .compliment-revealed-card {
+        min-height: 140px;
+        padding: 2rem 1.5rem;
+      }
+      .compliment-deck-wrapper {
+        width: 160px;
+        height: 110px;
+      }
+      .compliment-deck-card {
+        width: 160px;
+        height: 100px;
+        font-size: 1.8rem;
+      }
+    }
+
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s ease;
+      padding: 2rem;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: var(--border-radius-card);
+      padding: 3rem;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      transform: scale(0.8) translateY(30px);
+      transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-emoji {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+      display: block;
+      animation: bounce 1s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .modal-text {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      line-height: 1.8;
+      color: var(--color-text-main);
+      margin-bottom: 2rem;
+    }
+
+    .modal-close {
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      padding: 10px 30px;
+      border: 1px solid #ddd;
+      border-radius: 30px;
+      background: transparent;
+      color: var(--color-text-main);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .modal-close:hover {
+      background: var(--color-soft-pink);
+      border-color: var(--color-dusty-rose);
+    }
+
+    /* ===== SCENE 5: HOROSCOPE ===== */
+    #scene-5-horoscope {
+      padding: 2rem;
+      overflow-y: auto;
+      justify-content: flex-start;
+      padding-top: 4vh;
+    }
+
+    .horoscope-subtitle {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--color-dusty-rose);
+      margin-bottom: 2rem;
+      text-align: center;
+      font-weight: 400;
+    }
+
+    .horoscope-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      max-width: 900px;
+      width: 100%;
+      padding-bottom: 6rem;
+    }
+
+    .horoscope-card {
+      background: var(--color-white);
+      border-radius: 20px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition-smooth);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.04);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .horoscope-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      border: 2px solid transparent;
+      transition: border-color 0.4s;
+      pointer-events: none;
+    }
+
+    .horoscope-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 36px rgba(212,175,55,0.15);
+    }
+
+    .horoscope-card:hover::after {
+      border-color: var(--color-accent-gold);
+    }
+
+    .horoscope-card.expanded {
+      grid-column: 1 / -1;
+      padding: 2.5rem;
+      background: linear-gradient(135deg, var(--color-white), var(--color-soft-pink));
+      box-shadow: 0 20px 60px rgba(212,175,55,0.2);
+    }
+
+    .horoscope-card.expanded::after {
+      border-color: var(--color-accent-gold);
+      box-shadow: 0 0 20px rgba(212,175,55,0.3);
+    }
+
+    .horoscope-icon {
+      font-size: 2.5rem;
+      display: block;
+      margin-bottom: 0.75rem;
+      transition: transform 0.4s;
+    }
+
+    .horoscope-card:hover .horoscope-icon {
+      transform: scale(1.2) rotate(10deg);
+    }
+
+    .horoscope-card.expanded .horoscope-icon {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .horoscope-sign {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-text-main);
+      margin-bottom: 0.5rem;
+    }
+
+    .horoscope-card.expanded .horoscope-sign {
+      font-size: 1.4rem;
+      color: var(--color-accent-gold);
+    }
+
+    .horoscope-title {
+      display: none;
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-style: italic;
+      color: var(--color-dusty-rose);
+      margin-bottom: 1rem;
+    }
+
+    .horoscope-card.expanded .horoscope-title {
+      display: block;
+    }
+
+    .horoscope-prediction {
+      display: none;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: var(--color-text-main);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .horoscope-card.expanded .horoscope-prediction {
+      display: block;
+    }
+
+    .horoscope-continue {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+    }
+
+    /* ===== SCENE 6: FINAL ===== */
+    #scene-6-final {
+      background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+      overflow: hidden;
+    }
+
+    #confetti-canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .final-content {
+      position: relative;
+      z-index: 3;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .final-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 6vw, 4rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--color-accent-gold), #f6e58d, var(--color-accent-gold));
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s linear infinite;
+      margin-bottom: 1.5rem;
+      line-height: 1.3;
+    }
+
+    @keyframes shimmer {
+      to { background-position: 200% center; }
+    }
+
+    .final-subtitle {
+      font-family: var(--font-body);
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 3rem;
+      font-weight: 300;
+    }
+
+    .final-hearts {
+      font-size: 3rem;
+      letter-spacing: 16px;
+      margin-bottom: 2rem;
+    }
+
+    .final-restart {
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      padding: 12px 32px;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 60px;
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 2rem;
+    }
+
+    .final-restart:hover {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border-color: rgba(255,255,255,0.6);
+    }
+
+    /* ===== SIDEBAR CONTROLS (PROGRESS DOTS + AUDIO) ===== */
+    .sidebar-controls {
+      position: fixed;
+      right: 1.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      z-index: 100;
+    }
+
+    .progress-dots {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .progress-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.15);
+      cursor: pointer;
+      transition: all 0.4s;
+      border: none;
+      padding: 0;
+    }
+
+    .progress-dot.active {
+      background: var(--color-accent-gold);
+      transform: scale(1.4);
+      box-shadow: 0 0 12px rgba(212,175,55,0.5);
+    }
+
+    .progress-dot:hover {
+      transform: scale(1.3);
+      background: var(--color-dusty-rose);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .envelope-container {
+        width: 200px;
+        height: 155px;
+      }
+
+      .envelope-flap-inner {
+        border-left-width: 100px;
+        border-right-width: 100px;
+        border-top-width: 78px;
+      }
+
+      .envelope-front::before {
+        border-left-width: 100px;
+        border-right-width: 100px;
+        border-bottom-width: 46px;
+        top: -46px;
+      }
+
+      .btn-primary {
+        padding: 15px 36px;
+        font-size: 1rem;
+      }
+
+      .horoscope-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.75rem;
+      }
+
+      .horoscope-card {
+        padding: 1rem;
+      }
+
+      .horoscope-icon {
+        font-size: 1.8rem;
+      }
+
+      .horoscope-sign {
+        font-size: 0.85rem;
+      }
+
+      .compliment-card {
+        width: 240px;
+        min-height: 180px;
+        padding: 1.5rem;
+        font-size: 1rem;
+      }
+
+      .sidebar-controls {
+        right: 0.75rem;
+      }
+
+      .letter-card {
+        padding: 2rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .horoscope-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* ===== LOADING SCREEN ===== */
+    .loading-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-gradient-start);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.8s ease;
+    }
+
+    .loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loading-flower {
+      font-size: 3rem;
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ANIMATED BACKGROUND -->
+  <div class="bg-animated"></div>
+
+  <!-- LOADING SCREEN -->
+  <div class="loading-screen" id="loading">
+    <span class="loading-flower">🌸</span>
+  </div>
+
+  <!-- SIDEBAR CONTROLS: PROGRESS DOTS + AUDIO TOGGLE -->
+  <div class="sidebar-controls" id="sidebarControls" style="display: none;">
+    <nav class="progress-dots" id="progressDots">
+      <button class="progress-dot active" data-scene="1" aria-label="Сцена 1"></button>
+      <button class="progress-dot" data-scene="2" aria-label="Сцена 2"></button>
+      <button class="progress-dot" data-scene="3" aria-label="Сцена 3"></button>
+      <button class="progress-dot" data-scene="4" aria-label="Сцена 4"></button>
+      <button class="progress-dot" data-scene="5" aria-label="Сцена 5"></button>
+      <button class="progress-dot" data-scene="6" aria-label="Сцена 6"></button>
+    </nav>
+    <button class="audio-toggle" id="audioToggle" aria-label="Фоновая музыка">
+      <span id="audioIcon">🔇</span>
+    </button>
+  </div>
+
+  <!-- SCENE 1: INTRO -->
+  <section class="scene active" id="scene-1-intro">
+    <h1 class="intro-title">8 Марта ✨</h1>
+    <div class="envelope-container" id="envelope">
+      <div class="envelope-body">
+        <div class="envelope-back"></div>
+        <div class="envelope-letter-peek" id="letterPeek"></div>
+        <div class="envelope-flap" id="envelopeFlap">
+          <div class="envelope-flap-inner"></div>
+        </div>
+        <div class="envelope-front">
+          <div class="envelope-heart">💌</div>
+        </div>
+      </div>
+    </div>
+    <button class="btn-primary intro-btn" id="openLetterBtn">Открыть письмо</button>
+  </section>
+
+  <!-- SCENE 2: LETTER -->
+  <section class="scene" id="scene-2-letter">
+    <div class="letter-card" id="letterCard">
+      <div class="letter-date">8 марта 2026</div>
+      <h2 class="letter-greeting" id="letterGreeting"></h2>
+      <div class="letter-flower-divider">🌷 🌸 🌺</div>
+      <p class="letter-body" id="letterBody"></p>
+      <p class="letter-signature" id="letterSignature"></p>
+      <div style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;">
+        <button class="btn-primary" id="toVideoBtn">Смотреть поздравление 🎥</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCENE 3: VIDEO -->
+  <section class="scene" id="scene-3-video">
+    <h2 class="scene-title">Поздравление 🎬</h2>
+    <div class="video-wrapper" id="videoWrapper">
+      <video
+        src="assets/video8march.mp4"
+        controls
+        preload="metadata"
+      ></video>
+    </div>
+    <div class="video-controls">
+      <button class="btn-primary" id="toComplimentsBtn">Продолжить ✨</button>
+    </div>
+    <audio id="bgMusic" loop preload="auto">
+      <source src="assets/audio8march.mp3" type="audio/mpeg">
+    </audio>
+  </section>
+
+  <!-- SCENE 4: COMPLIMENTS -->
+  <section class="scene" id="scene-4-compliments">
+    <h2 class="scene-title">Комплименты для вас 💝</h2>
+    <div class="compliments-area">
+      <!-- Revealed card area -->
+      <div class="compliment-reveal" id="complimentReveal">
+        <div class="compliment-empty-state" id="complimentEmptyState">
+          Нажмите на колоду или кнопку, чтобы вытянуть комплимент ✨
+        </div>
+      </div>
+      <!-- Deck -->
+      <div class="compliment-deck-wrapper" id="complimentDeck"></div>
+      <!-- Counter -->
+      <div class="compliment-counter" id="complimentCounter"></div>
+      <!-- Buttons -->
+      <button class="btn-primary random-compliment-btn" id="randomComplimentBtn">Вытянуть комплимент 🎲</button>
+      <button class="btn-secondary" id="toHoroscopeBtn">К гороскопу ♈</button>
+    </div>
+  </section>
+
+  <!-- SCENE 5: HOROSCOPE -->
+  <section class="scene" id="scene-5-horoscope">
+    <h2 class="scene-title">Весенний гороскоп 🔮</h2>
+    <p class="horoscope-subtitle">Нажмите на свой знак зодиака</p>
+    <div class="horoscope-grid" id="horoscopeGrid"></div>
+    <button class="btn-primary horoscope-continue" id="toFinalBtn">Финал 🌟</button>
+  </section>
+
+  <!-- SCENE 6: FINAL -->
+  <section class="scene" id="scene-6-final">
+    <canvas id="confetti-canvas"></canvas>
+    <div class="final-content">
+      <div class="final-hearts" id="finalHearts">💐 🌸 💖 🌸 💐</div>
+      <h2 class="final-title" id="finalTitle"></h2>
+      <p class="final-subtitle">С праздником, дорогие женщины! Пусть каждый день будет наполнен теплом и радостью!</p>
+      <button class="final-restart" id="restartBtn">Начать сначала 🔄</button>
+    </div>
+  </section>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="complimentModal">
+    <div class="modal-content">
+      <span class="modal-emoji">🌟</span>
+      <p class="modal-text" id="modalText"></p>
+      <button class="modal-close" id="modalClose">Спасибо! 💕</button>
+    </div>
+  </div>
+
+  <script>
+    /* ===============================================
+       DATA & STATE
+    =============================================== */
+    let appData = null;
+    let currentScene = 1;
+    const totalScenes = 6;
+    let musicStarted = false;
+    const MUSIC_FULL_VOLUME = 0.40;
+    const MUSIC_DUCK_VOLUME = 0.12;
+    let sceneTimeline = null; // track active GSAP timeline per scene
+
+    /* ===============================================
+       DATA LOADING
+    =============================================== */
+    async function fetchData() {
+      try {
+        const response = await fetch('assets/data.json');
+        if (!response.ok) throw new Error('JSON fetch failed');
+        appData = await response.json();
+      } catch (e) {
+        console.warn('Could not load data.json, using embedded fallback data.');
+        appData = getEmbeddedData();
+      }
+      return appData;
+    }
+
+    function getEmbeddedData() {
+      return {
+        compliments: [
+          { id: 1, text: "Ты умеешь превращать любой хаос в идеальную планограмму жизни! 🌟", themeColor: "#f8e8e8" },
+          { id: 2, text: "Твоя улыбка — лучший KPI нашего отдела! 📊💖", themeColor: "#e8f0f8" },
+          { id: 3, text: "Ты как скидка 90% — все хотят быть рядом! 🛍️", themeColor: "#f8f0e8" },
+          { id: 4, text: "С тобой любой дедлайн становится праздником! 🎉", themeColor: "#e8f8f0" },
+          { id: 5, text: "Ты — тот самый товар, которого всегда не хватает на полке: уникальная и незаменимая! ✨", themeColor: "#f0e8f8" },
+          { id: 6, text: "Твоя энергия заряжает лучше любого корпоративного тренинга! ⚡", themeColor: "#f8e8f0" },
+          { id: 7, text: "Ты управляешь задачами так виртуозно, что Agile завидует! 🚀", themeColor: "#e8f8f8" },
+          { id: 8, text: "Без тебя наш open space был бы просто space. 💫", themeColor: "#f8f8e8" },
+          { id: 9, text: "Ты — золотой стандарт коллеги: умная, добрая, и всегда знаешь где печеньки! 🍪", themeColor: "#fce8e8" },
+          { id: 10, text: "Твоя креативность превышает все плановые показатели! 🎨", themeColor: "#e8ecf8" },
+          { id: 11, text: "Если бы продуктивность продавалась — ты была бы премиум-брендом! 👑", themeColor: "#f8efe8" },
+          { id: 12, text: "Ты заходишь в офис — и весь этаж начинает улыбаться! 😊", themeColor: "#e8f8ec" },
+          { id: 13, text: "Твой позитив — наш главный нематериальный актив! 💎", themeColor: "#f0f0f8" },
+          { id: 14, text: "Ты решаешь проблемы быстрее, чем они успевают стать проблемами! 🔥", themeColor: "#f8e8ec" },
+          { id: 15, text: "С тобой даже инвентаризация кажется весёлым квестом! 🗺️", themeColor: "#ecf0e8" },
+          { id: 16, text: "Ты настолько крутая, что конкуренты хотят переманить тебя… но мы не отдадим! 💪", themeColor: "#f8ecf0" },
+          { id: 17, text: "Твоя внимательность к деталям — это суперсила, о которой не пишут в резюме! 🔍", themeColor: "#e8eef8" },
+          { id: 18, text: "Ты — Wi-Fi нашего коллектива: без тебя никто не коннектится! 📶", themeColor: "#f4e8f8" },
+          { id: 19, text: "Рядом с тобой хочется работать лучше и мечтать смелее! 🌈", themeColor: "#f8f4e8" },
+          { id: 20, text: "Ты доказываешь, что грация и профессионализм — идеальная пара! 💃", themeColor: "#e8f4f8" },
+          { id: 21, text: "Твой смех — лучший саундтрек рабочего дня! 🎵", themeColor: "#f8e8f4" },
+          { id: 22, text: "Ты — тот человек, ради которого стоит ходить на работу! 🌻", themeColor: "#eef8e8" },
+          { id: 23, text: "Если бы существовал рейтинг обаяния, ты была бы вне конкуренции! 🏆", themeColor: "#f8eee8" },
+          { id: 24, text: "Твои идеи на брейнштормах — как вишенка на торте: всегда в точку! 🍒", themeColor: "#e8e8f8" },
+          { id: 25, text: "Ты вдохновляешь не словами, а просто тем, какая ты есть! 🦋", themeColor: "#f8e8e8" },
+          { id: 26, text: "С тобой рядом даже понедельник чувствует себя пятницей! 🎈", themeColor: "#e8f8f4" },
+          { id: 27, text: "Ты умеешь находить решения там, где остальные видят только проблемы! 💡", themeColor: "#f4f8e8" },
+          { id: 28, text: "Твоя доброта — это та валюта, курс которой только растёт! 💰", themeColor: "#f8e8ee" },
+          { id: 29, text: "Ты — секретный ингредиент, который делает нашу команду непобедимой! 🧩", themeColor: "#eef0f8" },
+          { id: 30, text: "Мир ритейла держится на таких людях, как ты — ярких, сильных и невероятных! 🌸", themeColor: "#f8ece8" }
+        ],
+        horoscope: [
+          { id: 1, sign: "Овен", icon: "♈", title: "Огненный старт квартала!", prediction: "Звёзды говорят: в этом марте вы первой добежите до кофемашины и найдёте там свежесваренный латте. Начальство заметит вашу энергию и подарит... ещё больше задач. Но вы справитесь, ведь вы — Овен!" },
+          { id: 2, sign: "Телец", icon: "♉", title: "Бонусы на горизонте!", prediction: "Весна принесёт приятные сюрпризы: скидка на любимый йогурт в столовой и комплимент от курьера. Финансовый гороскоп: не покупайте всё, что на распродаже — хотя бы сегодня!" },
+          { id: 3, sign: "Близнецы", icon: "♊", title: "Двойная удача!", prediction: "Ваша способность делать два дела одновременно выйдет на новый уровень: вы сможете слушать совещание И выбирать платье онлайн. Никто не заметит. Вы гений многозадачности!" },
+          { id: 4, sign: "Рак", icon: "♋", title: "Уютный март!", prediction: "Ваша суперспособность создавать уют превратит рабочее место в оазис. Коллеги будут приходить к вам «просто поговорить» (и за конфетками). Примите это как комплимент!" },
+          { id: 5, sign: "Лев", icon: "♌", title: "Королева офиса!", prediction: "Этой весной все взгляды будут прикованы к вам — особенно на корпоративе. Ваша презентация сорвёт аплодисменты, а ваш наряд — комплименты. Просто будьте собой, этого достаточно!" },
+          { id: 6, sign: "Дева", icon: "♍", title: "Идеальный порядок!", prediction: "Ваши таблицы в Excel станут произведением искусства. Коллеги будут просить мастер-класс. Совет звёзд: позвольте себе хаос — съешьте десерт ДО обеда!" },
+          { id: 7, sign: "Весы", icon: "♎", title: "Гармония во всём!", prediction: "Вы наконец решите, что заказать на обед — и это будет лучший выбор в истории! Ваш дар дипломатии спасёт отдел от войны за кондиционер. Вы — миротворец года!" },
+          { id: 8, sign: "Скорпион", icon: "♏", title: "Магнетизм на максимуме!", prediction: "Ваш взгляд на совещании заставит всех согласиться с вашим предложением. Загадочная улыбка добавит интриги. Секрет успеха: вы просто думали о выходных!" },
+          { id: 9, sign: "Стрелец", icon: "♐", title: "Приключения ждут!", prediction: "Командировка мечты уже на горизонте! А пока — вы найдёте новый маршрут до работы, который экономит 5 минут. Используйте их на кофе. Вы это заслужили!" },
+          { id: 10, sign: "Козерог", icon: "♑", title: "Карьерный взлёт!", prediction: "Ваше трудолюбие будет вознаграждено: вас похвалят на планёрке, а может даже дважды! Совет: примите комплимент и НЕ говорите «да ладно, это команда». Это ВЫ молодец!" },
+          { id: 11, sign: "Водолей", icon: "♒", title: "Инновации весны!", prediction: "Ваша безумная идея, которую все отвергли в январе, внезапно станет хитом! Говорили же! Бонус: вы изобретёте новый способ использовать степлер. Патент в пути!" },
+          { id: 12, sign: "Рыбы", icon: "♓", title: "Творческий поток!", prediction: "Ваша интуиция подскажет, когда именно зайти к начальству с просьбой. Спойлер: после обеда, когда все сытые и добрые. Креативность зашкаливает — даже отчёты станут поэзией!" }
+        ],
+        letter: {
+          greeting: "Дорогие наши дамы! 💐",
+          body: "С прекрасным праздником 8 Марта! Вы — те, кто делает нашу работу не просто работой, а настоящим удовольствием. Ваши улыбки ярче любых витрин, ваша энергия вдохновляет всю компанию, а ваш профессионализм — наша главная гордость. Пусть эта весна принесёт вам столько же радости, сколько вы дарите нам каждый день!",
+          signature: "С любовью и восхищением,\nВаши мужчины ELIT 💛"
+        },
+        finalMessage: "Вы — весна нашего отдела 💐"
+      };
+    }
+
+    /* ===============================================
+       DOM RENDERING
+    =============================================== */
+    function renderLetter(data) {
+      document.getElementById('letterGreeting').textContent = data.letter.greeting;
+      document.getElementById('letterBody').textContent = data.letter.body;
+      document.getElementById('letterSignature').textContent = data.letter.signature;
+      document.getElementById('finalTitle').textContent = data.finalMessage;
+    }
+
+    let drawnCompliments = [];
+    let remainingCompliments = [];
+
+    function renderCompliments(compliments) {
+      remainingCompliments = [...compliments];
+      drawnCompliments = [];
+      renderDeck();
+      // Reset reveal area
+      const reveal = document.getElementById('complimentReveal');
+      reveal.innerHTML = '<div class="compliment-empty-state" id="complimentEmptyState">Нажмите на колоду или кнопку, чтобы вытянуть комплимент ✨</div>';
+    }
+
+    function renderDeck() {
+      const deck = document.getElementById('complimentDeck');
+      deck.innerHTML = '';
+      const remaining = remainingCompliments.length;
+      const maxVisible = Math.min(remaining, 5);
+
+      for (let i = 0; i < maxVisible; i++) {
+        const card = document.createElement('div');
+        card.className = 'compliment-deck-card';
+        const offset = i * 4;
+        const rotate = (i - Math.floor(maxVisible / 2)) * 3;
+        card.style.bottom = offset + 'px';
+        card.style.left = '50%';
+        card.style.transform = 'translateX(-50%) rotate(' + rotate + 'deg)';
+        card.style.zIndex = maxVisible - i;
+        card.textContent = '💌';
+        if (i === 0) {
+          card.addEventListener('click', drawCompliment);
+        }
+        deck.appendChild(card);
+      }
+
+      if (remaining === 0) {
+        // Silently reshuffle — infinite feel
+        remainingCompliments = [...appData.compliments];
+        drawnCompliments = [];
+        renderDeck();
+      }
+    }
+
+    function drawCompliment() {
+      if (remainingCompliments.length === 0) {
+        remainingCompliments = [...appData.compliments];
+        drawnCompliments = [];
+      }
+
+      const idx = Math.floor(Math.random() * remainingCompliments.length);
+      const compliment = remainingCompliments.splice(idx, 1)[0];
+      drawnCompliments.push(compliment);
+
+      const topCard = document.querySelector('.compliment-deck-card');
+      if (topCard) {
+        gsap.to(topCard, {
+          y: -80, opacity: 0, scale: 0.5,
+          rotation: (Math.random() - 0.5) * 40,
+          duration: 0.4, ease: 'power2.in',
+          onComplete: () => renderDeck()
+        });
+      } else {
+        renderDeck();
+      }
+
+      showRevealedCard(compliment);
+    }
+
+    function showRevealedCard(compliment) {
+      const reveal = document.getElementById('complimentReveal');
+      const card = document.createElement('div');
+      card.className = 'compliment-revealed-card';
+      card.style.background = compliment.themeColor || 'var(--color-white)';
+      card.innerHTML = '<span class="compliment-quote-mark">❝</span><span>' + compliment.text + '</span>';
+
+      reveal.innerHTML = '';
+      reveal.appendChild(card);
+
+      gsap.fromTo(card,
+        { rotateY: -180, opacity: 0, scale: 0.7 },
+        { rotateY: 0, opacity: 1, scale: 1, duration: 0.8, ease: 'back.out(1.4)' }
+      );
+
+      for (let i = 0; i < 6; i++) {
+        const spark = document.createElement('div');
+        spark.className = 'petal';
+        spark.textContent = ['✨','🌟','💫','⭐','💖','🌸'][i % 6];
+        spark.style.left = '50%';
+        spark.style.top = '40%';
+        spark.style.fontSize = '18px';
+        spark.style.zIndex = '20';
+        spark.style.position = 'absolute';
+        reveal.appendChild(spark);
+        gsap.fromTo(spark,
+          { opacity: 1, scale: 1 },
+          { x: (Math.random()-0.5)*200, y: (Math.random()-0.5)*150,
+            opacity: 0, scale: 0.2, duration: 1.2, ease: 'power2.out',
+            delay: i * 0.06, onComplete: () => spark.remove() }
+        );
+      }
+    }
+
+    function renderHoroscope(horoscope) {
+      const grid = document.getElementById('horoscopeGrid');
+      grid.innerHTML = '';
+      horoscope.forEach(h => {
+        const card = document.createElement('div');
+        card.className = 'horoscope-card';
+        card.dataset.id = h.id;
+        card.innerHTML =
+          '<span class="horoscope-icon">' + h.icon + '</span>' +
+          '<div class="horoscope-sign">' + h.sign + '</div>' +
+          '<div class="horoscope-title">' + h.title + '</div>' +
+          '<div class="horoscope-prediction">' + h.prediction + '</div>';
+        card.addEventListener('click', () => toggleHoroscope(card));
+        grid.appendChild(card);
+      });
+    }
+
+    function toggleHoroscope(card) {
+      const wasExpanded = card.classList.contains('expanded');
+      document.querySelectorAll('.horoscope-card.expanded').forEach(c => {
+        c.classList.remove('expanded');
+        gsap.to(c, { scale: 1, duration: 0.4, ease: 'power2.out' });
+      });
+      if (!wasExpanded) {
+        card.classList.add('expanded');
+        gsap.fromTo(card, { scale: 0.95 }, { scale: 1, duration: 0.5, ease: 'elastic.out(1, 0.5)' });
+        const title = card.querySelector('.horoscope-title');
+        const pred = card.querySelector('.horoscope-prediction');
+        gsap.fromTo([title, pred], { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: 'power2.out' });
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    /* ===============================================
+       SCENE MANAGEMENT — NO DOUBLE-DRAW
+       Scene container appears INSTANTLY.
+       Only inner content animates via onSceneEnter().
+    =============================================== */
+    function killActiveTimeline() {
+      if (sceneTimeline) {
+        sceneTimeline.kill();
+        sceneTimeline = null;
+      }
+    }
+
+    function hideAllScenes() {
+      document.querySelectorAll('.scene').forEach(s => {
+        s.classList.remove('active');
+        gsap.killTweensOf(s); // kill any running scene tween
+        s.style.opacity = '0';
+        s.style.visibility = 'hidden';
+        s.style.pointerEvents = 'none';
+      });
+    }
+
+    function prepareSceneContent(num) {
+      // Set inner elements to their "pre-animation" state
+      // so they're invisible when the scene container appears.
+      switch(num) {
+        case 2:
+          gsap.set('#letterCard', { scale: 0.8, opacity: 0 });
+          break;
+        case 4: {
+          const deckCards = document.querySelectorAll('.compliment-deck-card');
+          gsap.set(deckCards, { opacity: 0, y: 50, scale: 0.6 });
+          const revealContent = document.querySelector('#complimentReveal > *');
+          if (revealContent) gsap.set(revealContent, { opacity: 0, y: 20 });
+          break;
+        }
+        case 5: {
+          const cards = document.querySelectorAll('.horoscope-card');
+          gsap.set(cards, { opacity: 0, scale: 0.7, y: 30 });
+          break;
+        }
+        case 6:
+          gsap.set('.final-hearts', { scale: 0, opacity: 0 });
+          gsap.set('.final-title', { y: 40, opacity: 0 });
+          gsap.set('.final-subtitle', { y: 20, opacity: 0 });
+          gsap.set('.final-restart', { y: 15, opacity: 0 });
+          break;
+      }
+    }
+
+    function showScene(num) {
+      if (currentScene === 6 && num !== 6) stopConfetti();
+      if (currentScene === 3 && num !== 3) {
+        const video = document.querySelector('#scene-3-video video');
+        if (video && !video.paused) {
+          video.pause();
+          video.currentTime = 0;
+        }
+      }
+
+      killActiveTimeline();
+      currentScene = num;
+      const sceneName = getSceneName(num);
+      const target = document.getElementById('scene-' + num + '-' + sceneName);
+
+      // 1) Hide every scene completely
+      hideAllScenes();
+
+      // 2) Prepare inner content (hidden state) BEFORE scene is shown
+      prepareSceneContent(num);
+
+      // 3) Show scene container INSTANTLY — no opacity animation on the container
+      target.style.opacity = '1';
+      target.style.visibility = 'visible';
+      target.style.pointerEvents = 'auto';
+      target.classList.add('active');
+
+      // 4) Animate inner content only
+      onSceneEnter(num);
+
+      // 5) Update progress dots
+      document.querySelectorAll('.progress-dot').forEach(function(dot, i) {
+        dot.classList.toggle('active', i + 1 === num);
+        if (num === 6) {
+          dot.style.background = dot.classList.contains('active')
+            ? 'var(--color-accent-gold)' : 'rgba(255,255,255,0.3)';
+        } else {
+          dot.style.background = '';
+        }
+      });
+
+      // 6) Toggle animated background
+      document.querySelector('.bg-animated').style.display = num === 6 ? 'none' : 'block';
+    }
+
+    function getSceneName(num) {
+      return ['intro','letter','video','compliments','horoscope','final'][num - 1];
+    }
+
+    function onSceneEnter(num) {
+      switch(num) {
+        case 2:
+          animateLetterIn();
+          break;
+        case 4:
+          animateComplimentsIn();
+          // Автоматически показать один случайный комплимент при входе в сцену
+          drawCompliment();
+          break;
+        case 5:
+          animateHoroscopeIn();
+          break;
+        case 6:
+          startConfetti();
+          animateFinalIn();
+          break;
+      }
+    }
+
+    /* ===============================================
+       GSAP ANIMATIONS — only inner content
+    =============================================== */
+    function animateIntro() {
+      gsap.set('.intro-title', { y: 30, opacity: 0 });
+      gsap.set('.intro-btn', { y: 20, opacity: 0 });
+
+      var tl = gsap.timeline();
+      tl.to('.intro-title', { opacity: 1, y: 0, duration: 1, ease: 'power3.out' })
+        .to('.intro-btn', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.4');
+    }
+
+    function animateEnvelopeOpen() {
+      var tl = gsap.timeline({ onComplete: function() { showScene(2); } });
+
+      document.querySelector('.envelope-container').style.animation = 'none';
+
+      tl
+        .to('.envelope-container', { scale: 1.3, duration: 0.6, ease: 'power2.inOut' })
+        .to('#envelopeFlap', { rotateX: 180, duration: 0.8, ease: 'power3.inOut', transformOrigin: 'top center' })
+        .to('#letterPeek', { opacity: 1, y: -40, duration: 0.6, ease: 'power2.out' }, '-=0.3')
+        .to('.envelope-container', { scale: 2, opacity: 0, duration: 0.7, ease: 'power2.in' }, '+=0.2')
+        .to('.intro-title', { opacity: 0, y: -30, duration: 0.4, ease: 'power2.in' }, '-=0.7')
+        .to('.intro-btn', { opacity: 0, duration: 0.3, ease: 'power2.in' }, '-=0.7');
+
+      spawnPetals();
+    }
+
+    function spawnPetals() {
+      var petals = ['🌸', '🌺', '🏵️', '💮', '✿', '❀'];
+      for (var i = 0; i < 20; i++) {
+        var petal = document.createElement('div');
+        petal.className = 'petal';
+        petal.textContent = petals[Math.floor(Math.random() * petals.length)];
+        petal.style.left = Math.random() * 100 + 'vw';
+        petal.style.top = '-50px';
+        petal.style.fontSize = (Math.random() * 20 + 14) + 'px';
+        document.body.appendChild(petal);
+
+        gsap.to(petal, {
+          y: window.innerHeight + 100,
+          x: (Math.random() - 0.5) * 200,
+          rotation: Math.random() * 720 - 360,
+          opacity: 0.8,
+          duration: Math.random() * 3 + 2,
+          delay: Math.random() * 1.5,
+          ease: 'power1.in',
+          onStart: function() { this.targets()[0].style.opacity = '0.9'; },
+          onComplete: function() { this.targets()[0].remove(); }
+        });
+      }
+    }
+
+    function animateLetterIn() {
+      // #letterCard was pre-set to scale:0.8, opacity:0 by prepareSceneContent
+      sceneTimeline = gsap.timeline();
+      sceneTimeline.to('#letterCard', { scale: 1, opacity: 1, duration: 1, ease: 'elastic.out(1, 0.6)', delay: 0.15 });
+    }
+
+    function animateComplimentsIn() {
+      sceneTimeline = gsap.timeline();
+      var deckCards = document.querySelectorAll('.compliment-deck-card');
+      sceneTimeline
+        .to(deckCards, { opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.08, ease: 'back.out(1.7)' }, 0.1);
+
+      var revealContent = document.querySelector('#complimentReveal > *');
+      if (revealContent) {
+        sceneTimeline.to(revealContent, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, 0.1);
+      }
+    }
+
+    function animateHoroscopeIn() {
+      var cards = document.querySelectorAll('.horoscope-card');
+      sceneTimeline = gsap.timeline();
+      sceneTimeline.to(cards, {
+        opacity: 1, scale: 1, y: 0,
+        duration: 0.5,
+        stagger: { each: 0.05, from: 'random' },
+        ease: 'back.out(1.4)'
+      }, 0.1);
+    }
+
+    function animateFinalIn() {
+      sceneTimeline = gsap.timeline();
+      sceneTimeline
+        .to('.final-hearts', { scale: 1, opacity: 1, duration: 0.8, ease: 'elastic.out(1, 0.4)' })
+        .to('.final-title', { y: 0, opacity: 1, duration: 1, ease: 'power3.out' }, '-=0.3')
+        .to('.final-subtitle', { y: 0, opacity: 1, duration: 0.8, ease: 'power2.out' }, '-=0.5')
+        .to('.final-restart', { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out' }, '-=0.3');
+    }
+
+    /* ===============================================
+       CONFETTI CANVAS
+    =============================================== */
+    var confettiAnimId = null;
+
+    function startConfetti() {
+      var canvas = document.getElementById('confetti-canvas');
+      var ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      var particles = [];
+      var colors = ['#d4af37','#dca3a3','#f6e58d','#ff6b81','#c56cf0','#7bed9f','#70a1ff','#ff4757','#ffa502','#2ed573'];
+
+      function Particle() { this.reset(); this.y = Math.random() * -canvas.height; }
+      Particle.prototype.reset = function() {
+        this.x = Math.random() * canvas.width;
+        this.y = -10;
+        this.size = Math.random() * 8 + 4;
+        this.speedY = Math.random() * 3 + 1.5;
+        this.speedX = (Math.random() - 0.5) * 2;
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.rotation = Math.random() * 360;
+        this.rotationSpeed = (Math.random() - 0.5) * 10;
+        this.shape = Math.random() > 0.5 ? 'rect' : 'circle';
+        this.wobble = Math.random() * 10;
+        this.wobbleSpeed = Math.random() * 0.1 + 0.03;
+      };
+      Particle.prototype.update = function() {
+        this.y += this.speedY;
+        this.x += Math.sin(this.wobble) * 0.8 + this.speedX;
+        this.wobble += this.wobbleSpeed;
+        this.rotation += this.rotationSpeed;
+        if (this.y > canvas.height + 20) this.reset();
+      };
+      Particle.prototype.draw = function() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate((this.rotation * Math.PI) / 180);
+        ctx.fillStyle = this.color;
+        if (this.shape === 'rect') {
+          ctx.fillRect(-this.size/2, -this.size/4, this.size, this.size/2);
+        } else {
+          ctx.beginPath();
+          ctx.arc(0, 0, this.size/2, 0, Math.PI*2);
+          ctx.fill();
+        }
+        ctx.restore();
+      };
+
+      for (var i = 0; i < 150; i++) particles.push(new Particle());
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(function(p) { p.update(); p.draw(); });
+        confettiAnimId = requestAnimationFrame(animate);
+      }
+      animate();
+
+      window.addEventListener('resize', function() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      });
+    }
+
+    function stopConfetti() {
+      if (confettiAnimId) { cancelAnimationFrame(confettiAnimId); confettiAnimId = null; }
+      var canvas = document.getElementById('confetti-canvas');
+      canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    /* ===============================================
+       AUDIO MANAGEMENT
+    =============================================== */
+    function startMusic() {
+      var audio = document.getElementById('bgMusic');
+      var icon  = document.getElementById('audioIcon');
+      var btn   = document.getElementById('audioToggle');
+      if (musicStarted) return;
+      musicStarted = true;
+      audio.volume = MUSIC_FULL_VOLUME;
+      var p = audio.play();
+      if (p && p.catch) p.catch(function(){});
+      icon.textContent = '🔊';
+      btn.classList.add('playing');
+    }
+
+    function toggleAudio() {
+      var audio = document.getElementById('bgMusic');
+      var icon  = document.getElementById('audioIcon');
+      var btn   = document.getElementById('audioToggle');
+      if (audio.paused) {
+        audio.volume = MUSIC_FULL_VOLUME;
+        var p = audio.play();
+        if (p && p.catch) p.catch(function(){});
+        icon.textContent = '🔊';
+        btn.classList.add('playing');
+        musicStarted = true;
+      } else {
+        audio.pause();
+        icon.textContent = '🔇';
+        btn.classList.remove('playing');
+      }
+    }
+
+    function setupVideoDucking() {
+      var video = document.querySelector('#scene-3-video video');
+      var audio = document.getElementById('bgMusic');
+      if (!video) return;
+      video.addEventListener('play', function() {
+        gsap.to(audio, { volume: MUSIC_DUCK_VOLUME, duration: 0.6 });
+      });
+      video.addEventListener('pause', function() {
+        if (musicStarted && !audio.paused) gsap.to(audio, { volume: MUSIC_FULL_VOLUME, duration: 0.6 });
+      });
+      video.addEventListener('ended', function() {
+        if (musicStarted && !audio.paused) gsap.to(audio, { volume: MUSIC_FULL_VOLUME, duration: 0.6 });
+      });
+    }
+
+    /* ===============================================
+       RANDOM COMPLIMENT
+    =============================================== */
+    function showRandomCompliment() { drawCompliment(); }
+
+    function closeModal() {
+      document.getElementById('complimentModal').classList.remove('active');
+    }
+
+    /* ===============================================
+       EVENT BINDINGS
+    =============================================== */
+    var envelopeOpened = false;
+
+    function safeOpenEnvelope() {
+      if (envelopeOpened) return;
+      envelopeOpened = true;
+      startMusic();
+      animateEnvelopeOpen();
+    }
+
+    function bindEvents() {
+      document.getElementById('openLetterBtn').addEventListener('click', function(e) { e.stopPropagation(); safeOpenEnvelope(); });
+      document.getElementById('envelope').addEventListener('click', safeOpenEnvelope);
+
+      document.getElementById('toVideoBtn').addEventListener('click', function() { showScene(3); });
+      document.getElementById('audioToggle').addEventListener('click', toggleAudio);
+      document.getElementById('toComplimentsBtn').addEventListener('click', function() { showScene(4); });
+
+      document.getElementById('randomComplimentBtn').addEventListener('click', showRandomCompliment);
+      document.getElementById('toHoroscopeBtn').addEventListener('click', function() { showScene(5); });
+      document.getElementById('toFinalBtn').addEventListener('click', function() { showScene(6); });
+
+      // Restart
+      document.getElementById('restartBtn').addEventListener('click', function() {
+        stopConfetti();
+        killActiveTimeline();
+        envelopeOpened = false;
+        musicStarted = false;
+
+        var audio = document.getElementById('bgMusic');
+        audio.pause();
+        audio.currentTime = 0;
+        document.getElementById('audioIcon').textContent = '🔇';
+        document.getElementById('audioToggle').classList.remove('playing');
+
+        // Kill ALL gsap tweens to prevent any lingering animations
+        gsap.killTweensOf('*');
+
+        // Reset envelope
+        var env = document.querySelector('.envelope-container');
+        env.style.animation = '';
+        gsap.set(env, { scale: 1, opacity: 1 });
+        gsap.set('#envelopeFlap', { rotateX: 0 });
+        gsap.set('#letterPeek', { opacity: 0, y: 0 });
+
+        // Reset horoscope
+        document.querySelectorAll('.horoscope-card').forEach(function(c) { c.classList.remove('expanded'); });
+
+        // Reset compliments
+        if (appData) renderCompliments(appData.compliments);
+
+        showScene(1);
+        setTimeout(animateIntro, 200);
+      });
+
+      document.getElementById('modalClose').addEventListener('click', closeModal);
+      document.getElementById('complimentModal').addEventListener('click', function(e) {
+        if (e.target === e.currentTarget) closeModal();
+      });
+
+      document.querySelectorAll('.progress-dot').forEach(function(dot) {
+        dot.addEventListener('click', function() {
+          var scene = parseInt(dot.dataset.scene);
+          if (scene !== currentScene) showScene(scene);
+        });
+      });
+
+      setupVideoDucking();
+    }
+
+    /* ===============================================
+       INITIALIZATION
+    =============================================== */
+    async function init() {
+      await fetchData();
+      renderLetter(appData);
+      renderCompliments(appData.compliments);
+      renderHoroscope(appData.horoscope);
+      bindEvents();
+
+      // Only scene 1 visible
+      hideAllScenes();
+      var s1 = document.getElementById('scene-1-intro');
+      s1.classList.add('active');
+      s1.style.opacity = '1';
+      s1.style.visibility = 'visible';
+      s1.style.pointerEvents = 'auto';
+
+      setTimeout(function() {
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('sidebarControls').style.display = '';
+        animateIntro();
+      }, 800);
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+      if (e.key === 'ArrowRight' && currentScene < totalScenes) showScene(currentScene + 1);
+      if (e.key === 'ArrowLeft' && currentScene > 1) showScene(currentScene - 1);
+    });
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+
+</body>
+</html>
