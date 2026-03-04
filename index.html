@@ -1146,20 +1146,8 @@
     let sceneTimeline = null; // track active GSAP timeline per scene
 
     /* ===============================================
-       DATA LOADING
+       EMBEDDED DATA
     =============================================== */
-    async function fetchData() {
-      try {
-        const response = await fetch('assets/data.json');
-        if (!response.ok) throw new Error('JSON fetch failed');
-        appData = await response.json();
-      } catch (e) {
-        console.warn('Could not load data.json, using embedded fallback data.');
-        appData = getEmbeddedData();
-      }
-      return appData;
-    }
-
     function getEmbeddedData() {
       return {
         compliments: [
@@ -1775,8 +1763,8 @@
     /* ===============================================
        INITIALIZATION
     =============================================== */
-    async function init() {
-      await fetchData();
+    function init() {
+      appData = getEmbeddedData();
       renderLetter(appData);
       renderCompliments(appData.compliments);
       renderHoroscope(appData.horoscope);
