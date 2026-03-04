@@ -991,7 +991,7 @@
         max-height: 85vh;
       }
 
-      /* 1. Делаем панель навигации удобной: опускаем ниже и добавляем красивую подложку */
+      /* 1. Эффект Aero Glass: больше прозрачности, сильнее размытие и легкая белая рамка */
       .sidebar-controls {
         top: auto;
         bottom: 1.5rem;
@@ -999,44 +999,48 @@
         transform: translateX(50%);
         flex-direction: row;
         gap: 12px;
-        background: rgba(255, 255, 255, 0.85); /* Полупрозрачный фон */
-        backdrop-filter: blur(8px); /* Размытие заднего фона */
-        -webkit-backdrop-filter: blur(8px);
+        background: rgba(255, 255, 255, 0.35); /* Сделали прозрачнее */
+        backdrop-filter: blur(12px); /* Усилили размытие фона */
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.5); /* Добавили блик на границе */
         padding: 8px 16px;
         border-radius: 40px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08); /* Легкая тень */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
       }
 
       .progress-dots {
         flex-direction: row;
       }
 
-      /* 2. Сцена с Письмом: увеличиваем отступ снизу, чтобы докрутить до кнопки */
+      /* 2. Сцена с Письмом: меняем flex на block, это 100% возвращает скролл */
       #scene-2-letter {
-        padding: 1.25rem 1rem 8rem; 
-        justify-content: flex-start; 
+        display: block; /* Убираем flex */
+        padding: 2rem 1rem 8rem; /* Даем отступы сверху и снизу */
+        overflow-y: auto;
+      }
+      
+      .letter-card {
+        margin: 0 auto; /* Возвращаем карточку по центру */
       }
 
       .letter-body {
         font-size: 0.95rem;
       }
 
-      /* 3. Сцена Комплиментов: выравниваем по верху, чтобы контент не обрезался, и даем место снизу */
       #scene-4-compliments {
         justify-content: flex-start;
         padding-top: 3rem;
         padding-bottom: 8rem;
       }
 
-      /* 4. Сцена Гороскопа: поднимаем кнопку Финала над навигацией */
       .horoscope-continue {
-        bottom: 6rem; /* Кнопка будет выше точек навигации */
-        width: 80%; /* Опционально: делает кнопку шире для удобного нажатия пальцем */
+        bottom: 6rem;
+        width: 80%;
         max-width: 300px;
       }
       
       #scene-5-horoscope {
-        padding-bottom: 10rem; /* Чтобы знаки зодиака можно было прокрутить выше кнопки Финал */
+        padding-bottom: 10rem;
       }
     }
 
